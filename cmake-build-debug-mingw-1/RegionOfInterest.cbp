@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="RegionOfInterest"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\opencv\;CMake Files\..\..\..\..\..\..\opencv\mingw-build\;CMake Files\..\..\..\..\..\..\opencv\mingw-build\install\;CMake Files\..\..\..\..\..\..\opencv\mingw-build\install\x64\;CMake Files\..\..\..\..\..\..\opencv\mingw-build\install\x64\mingw\;CMake Files\..\..\..\..\..\..\opencv\mingw-build\install\x64\mingw\lib\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="RegionOfInterest">
+				<Option output="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/RegionOfInterest.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/opencv/mingw-build/install/include"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../include/c++/11.2.0"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../include/c++/11.2.0/x86_64-w64-mingw32"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../include/c++/11.2.0/backward"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/include"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 RegionOfInterest"/>
+					<CompileFile command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="RegionOfInterest/fast">
+				<Option output="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/RegionOfInterest.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/opencv/mingw-build/install/include"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../include/c++/11.2.0"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../include/c++/11.2.0/x86_64-w64-mingw32"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../include/c++/11.2.0/backward"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/include"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed"/>
+					<Add directory="c:\program files\mingw-64-nuwen_net\bin\../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 RegionOfInterest/fast"/>
+					<CompileFile command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~1/MINGW-~2/bin/mingw32-make.exe -f &quot;C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/src/enhanced_roi_detection.h">
+			<Option target="RegionOfInterest"/>
+		</Unit>
+		<Unit filename="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/src/enhancedc_roi_detection.h">
+			<Option target="RegionOfInterest"/>
+		</Unit>
+		<Unit filename="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/src/main.cpp">
+			<Option target="RegionOfInterest"/>
+		</Unit>
+		<Unit filename="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/src/winutil.h">
+			<Option target="RegionOfInterest"/>
+		</Unit>
+		<Unit filename="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/../../../../../../opencv/mingw-build/install/OpenCVConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\opencv\mingw-build\install\"/>
+		</Unit>
+		<Unit filename="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/../../../../../../opencv/mingw-build/install/x64/mingw/lib/OpenCVConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\opencv\mingw-build\install\x64\mingw\lib\"/>
+		</Unit>
+		<Unit filename="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/../../../../../../opencv/mingw-build/install/x64/mingw/lib/OpenCVModules-release.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\opencv\mingw-build\install\x64\mingw\lib\"/>
+		</Unit>
+		<Unit filename="C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/../../../../../../opencv/mingw-build/install/x64/mingw/lib/OpenCVModules.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\opencv\mingw-build\install\x64\mingw\lib\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

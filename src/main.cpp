@@ -4,261 +4,182 @@
 //// C++ 2017
 
 #include <bits/stdc++.h>
-//#include <opencv2/highgui.hpp>
-#include <opencv2/opencv.hpp>
-#include <dirent.h>
-#include <fileapi.h>
+#include <opencv2/highgui.hpp>
+#include "../../CppImageProcessing/improc.h"
+#include "winutil.h"
 using namespace std;
 using namespace cv;
 
-class Util {
+
+class ROIUtil {
 public:
-	static vector<string> DirContents(const string& pathString) {
-		const char *path = pathString.c_str();
-		DIR* dir;
-		struct dirent *diread;
-		vector<string> files;
-		if ((dir = opendir(path)) != nullptr) {
-			while ((diread = readdir(dir)) != nullptr) {
-				files.emplace_back(diread -> d_name);
-			}
-			closedir(dir);
-		} else {
-			perror("opendir");
-			EXIT_FAILURE;
-		}
-		return files;
-	}
-
-	static bool IsDir(const string& pathString) {
-		DWORD attrib = GetFileAttributes(reinterpret_cast<LPCSTR>(pathString.c_str()));
-		return (attrib & FILE_ATTRIBUTE_DIRECTORY) != 0;
-	}
-
-	static string MakeDir(const string& pathString) {
-		const char *path = pathString.c_str();
-		if (mkdir(path) == -1) {}
-		return pathString;
-	}
-
-}; Util util;
-
-class Ops {
-public:
-	static Mat Grayscale(Mat& inputImg) {  // Grayscaling menggunakan teknik rgb to yiq
+	// Generate image with green Bounding Box
+	static Mat BoundingBox(const Mat& inputImg, tuple<uint16_t, uint16_t> rowRange, tuple<uint16_t, uint16_t> colRange, uint8_t borderSize) {
+		uint16_t fRows = get<0>(rowRange), lRows = get<1>(rowRange),
+				fCols = get<0>(colRange), lCols = get<1>(colRange);
+		uint16_t tBorder = fRows+borderSize, bBorder = lRows-borderSize,
+				lBorder = fCols+borderSize, rBorder = lCols-borderSize;
 		Mat outputImg = inputImg.clone();
 
-		for (uint_fast32_t i = 0; i < outputImg.rows; ++i) {
-			for (uint_fast32_t j = 0; j < outputImg.cols; ++j) {
-				vector<vector<float_t>> yiq{{0.299, 0.587, 0.114},
-				                            {0.596, -0.274, -0.322},
-				                            {0.211, -0.523, 0.312}};
-				uint8_t *imgPix = outputImg.ptr(i, j);
-				uint8_t intensity = 0;
-
-				for (uint_fast8_t k = 0; k < 3; ++k) {
-					intensity += imgPix[k] * yiq[0][k];
-				}
-				for (uint_fast8_t l = 0; l < 3; ++l) {
-					imgPix[l] = intensity;
-				}
-			}
-		}
-		return outputImg;
-	}
-
-	static Mat Brightness(Mat& inputImg, int16_t bVal) {  // Penyesuaian kecerahan citra (+/-)
-		Mat outputImg = inputImg.clone();
-
-		for (uint_fast32_t i = 0; i < outputImg.rows; ++i) {
-			for (uint_fast32_t j = 0; j < outputImg.cols; ++j) {
-				uint8_t *imgPix = outputImg.ptr(i, j);
-				for (int_fast8_t k = 0; k < 3; ++k) {
-					if (bVal >= 0) {
-						imgPix[k] = (imgPix[k] + bVal) >= 255? 255: imgPix[k] + bVal;
-					} else {
-						imgPix[k] = (imgPix[k] - bVal) <= 0? 0: imgPix[k] - bVal;
-					}
-				}
-			}
-		}
-		return outputImg;
-	}
-
-	static Mat Thresholding(Mat& inputImg, uint8_t tVal) {  // Binerisasi/thresholding untuk mengetahui warna terang dan gelap
-		Mat outputImg = inputImg.clone();
-
-		for (uint_fast32_t i = 0; i < outputImg.rows; ++i) {
-			for (uint_fast32_t j = 0; j < outputImg.cols; ++j) {
+		for (uint_fast16_t i = fRows-borderSize; i < lRows+borderSize; ++i) {
+			for (uint_fast16_t j = fCols-borderSize; j < lCols+borderSize; ++j) {
 				uint8_t *imgPix = outputImg.ptr(i, j);
 
 				for (uint_fast8_t k = 0; k < 3; ++k) {
-					imgPix[k] = imgPix[k] > tVal ? 255 : 0;
+					if (i <= tBorder-borderSize || i >= bBorder+borderSize ||
+					j <= lBorder-borderSize || j >= rBorder+borderSize) {
+						imgPix[k] = k == 1? 255 : 0;  // (0, 255, 0) Green color space
+					}
 				}
 			}
 		}
+
 		return outputImg;
 	}
-}; Ops ops;
 
-vector<Mat> ComplexROIDetection(Mat& img) {
-	uint16_t imgRows = img.rows, imgCols = img.cols;
-	uint16_t centerX = round(imgCols/2), centerY = round(imgRows/2);
-	uint16_t currentX = centerX, currentY = centerY;
-	uint8_t roiSize = 40;
-	static bool centerStat = false;
+	// Image extractor including (ROI image & output Bounding Box image)
+	static vector<Mat> GenerateROI(const Mat& inputImg, uint16_t roiSize,
+	                        uint16_t currentX, uint16_t currentY) {
+		uint16_t ROISIZE = roiSize/2, ROIWEIGHT = roiSize%2 != 0? 1: 0;
+		// ROIWEIGHT -> ROI size weighting for odd roiSize/2 result
 
-	Mat outputImg = img.clone(), outputROIImg;
-	for (uint_fast8_t i = 0; i < 2; ++i) {
-		while (true) {
-			outputROIImg = img.colRange(currentX - roiSize, currentX + roiSize).
-					rowRange(currentY - roiSize, currentY + roiSize).clone();
+		Mat outputROIImg = inputImg.colRange(currentX-ROISIZE, currentX+ROISIZE+ROIWEIGHT).
+				rowRange(currentY-ROISIZE, currentY + ROISIZE+ROIWEIGHT).clone();
+		Mat outputBBImg = BoundingBox(inputImg, make_tuple(currentY-ROISIZE, currentY+ROISIZE+ROIWEIGHT),
+				make_tuple(currentX-ROISIZE, currentX+ROISIZE+ROIWEIGHT), 2).clone();
 
-			outputROIImg = ops.Brightness(outputROIImg, +50);
-			outputROIImg = ops.Grayscale(outputROIImg);
-			outputROIImg = ops.Thresholding(outputROIImg, 150);
-
-			float_t minVal = 0, maxVal = 0;
-
-			for (uint_fast32_t j = 0; j < outputROIImg.rows; ++j) {
-				for (uint_fast32_t k = 0; k < outputROIImg.cols; ++k) {
-					uint8_t *imgPix = outputROIImg.ptr(j, k);
-
-					for (uint_fast8_t l = 0; l < 3; ++l) {
-						minVal += imgPix[l] == 0 ? 1 : 0;
-						maxVal += imgPix[l] == 255 ? 1 : 0;
-					}
-				}
-			}
-
-			float_t val = max(minVal, maxVal);
-			float_t refRatio = val / (minVal + maxVal);  // White percentage || for white color majority
-			cout << minVal << " - " << maxVal << endl;
-			cout << refRatio << endl;
-
-			if (refRatio >= 0.95) {
-				imshow("", outputROIImg);
-				cout << "PERFECT IMAGE with," << endl;
-				cout << "\t-whitePercentage: " << refRatio << endl;
-				cout << "\t-center(X,Y): (" << currentX << ", " << currentY << ")" << endl;
-				cout << "\t-imgSize(Cols,Rows): (" << imgCols << "," << imgRows << ")" << endl;
-				outputROIImg = img.colRange(currentX - roiSize, currentX + roiSize).
-						rowRange(currentY - roiSize, currentY + roiSize);
-				for (uint_fast32_t j = currentY - roiSize; j < currentY + roiSize; ++j) {
-					for (uint_fast32_t k = currentX - roiSize; k < currentX + roiSize; ++k) {
-						for (uint_fast8_t l = 0; l < 3; ++l) {
-							outputImg.ptr(j, k)[l] = 0;
-						}
-					}
-				}
-				break;
-			} else {
-				cout << "NOT PERFECT IMAGE" << endl;
-				cout << currentY << " from " << centerY << endl << endl;
-				if (i == 0) {
-					currentY -= 1;
-				} else {
-					if (!centerStat) {
-						currentY = centerY;
-						centerStat = true;
-					}
-					currentY += 1;
-				}
-			}
-		}
+		return {outputROIImg, outputBBImg};
 	}
-	return {outputROIImg, outputImg};
+};
+
+/* Minus=(<1, >0), Absolute=(1), Plus=(>1, <2)
+ * All ROI method set center point is based on the length of image rows and cols ratio
+ * that based on both given ratio
+ *
+ * Best ratio: Front(x=0.694, y=0.572), Back(x=0.31, y=0.72)
+ *
+ * Finally, ROI position shown as illustration below:
+ * Image ROI Illustration
+	> Frontside ROI
+	  ______________________________
+	 |                              |
+	 |                              |
+	 |              +               |
+	 |                    X         |
+	 |                              |
+	 |______________________________|
+	> Backside ROI
+      ______________________________
+	 |                              |
+	 |                              |
+	 |              +               |
+	 |        X                     |
+	 |                              |
+	 |______________________________|
+	 */
+vector<Mat> aioROIGenerator(const Mat& inputImg, const uint16_t& roiSize,
+		const tuple<float_t, float_t>& ratio) {
+	uint16_t inputRows = inputImg.rows, inputCols = inputImg.cols;
+	uint16_t currentX = get<0>(ratio)*float_t(inputCols),
+	currentY = get<1>(ratio)*float_t(inputRows);
+
+	return ROIUtil::GenerateROI(inputImg, roiSize, currentX, currentY);  // sequence(ROI, Bounding Box Image)
 }
 
 
-vector<Mat> FrontROIDetection(Mat& img) {
-	uint16_t imgRows = img.rows, imgCols = img.cols;  // Menyimpan data panjang baris dan kolom citra
-	// Menyimpan data index tengah pada masing-masing baris dan kolom
-	uint16_t centerX = round(imgCols/2), centerY = round(imgRows/2);
-	uint16_t currentX = centerX-round(0.05*centerX), currentY = centerY-round(0.10*centerY);
-	uint8_t roiSize = 20;
-
-	Mat outputImg = img.clone(), outputROIImg;
-	outputROIImg = img.colRange(currentX - roiSize, currentX + roiSize).
-			rowRange(currentY - roiSize, currentY + roiSize).clone();
-	for (uint_fast32_t j = currentY - roiSize; j < currentY + roiSize; ++j) {
-		for (uint_fast32_t k = currentX - roiSize; k < currentX + roiSize; ++k) {
-			for (uint_fast8_t l = 0; l < 3; ++l) {
-				outputImg.ptr(j, k)[l] = 0;
-			}
-		}
-	}
-	return {outputROIImg, outputImg};
-}
-
-vector<Mat> ROIDetection(Mat& img) {
-	uint16_t imgRows = img.rows, imgCols = img.cols;  // Menyimpan data panjang baris dan kolom citra
-	// Menyimpan data index tengah pada masing-masing baris dan kolom
-	uint16_t centerX = round(imgCols/2), centerY = round(imgRows/2);
-	uint16_t currentX = centerX-round(0.25*centerX), currentY = centerY+round(0.20*centerY);
-	uint8_t roiSize = 20;
-
-	Mat outputImg = img.clone(), outputROIImg;
-	outputROIImg = img.colRange(currentX - roiSize, currentX + roiSize).
-			rowRange(currentY - roiSize, currentY + roiSize).clone();
-	for (uint_fast32_t j = currentY - roiSize; j < currentY + roiSize; ++j) {
-		for (uint_fast32_t k = currentX - roiSize; k < currentX + roiSize; ++k) {
-			for (uint_fast8_t l = 0; l < 3; ++l) {
-				outputImg.ptr(j, k)[l] = 0;
-			}
-		}
-	}
-	return {outputROIImg, outputImg};
-}
 
 void MultiFiles() {
-	string mainDir = R"(C:\Users\MarufN\Documents\Coding\C++\RegionOfInterest\assets\dataset)";
-	vector<string> sides = Util::DirContents(mainDir);
-	string mainOutputDir = R"(E:\output)";
+	string mainDir = R"(C:\Users\MarufN\Documents\Coding\C++\RegionOfInterest\assets\dataset)",
+			mainOutputDir = R"(E:\output)", mainFlatOutputDir = R"(E:\output_flat)";
+	vector<string> sides = WinUtil::DirContents(mainDir);
+	vector<string> failFiles, currentTopFolder = {"backside", "frontside"};;
+	uint16_t totalFile = 0;
+
+	WinUtil::Remove(mainOutputDir);
+	WinUtil::Remove(mainFlatOutputDir);
+	WinUtil::MakeDir(mainFlatOutputDir);
 
 	for (uint_fast32_t i = 0; i < sides.size(); ++i) {
 //		cout << sides[i] << endl;
-		string side = Util::MakeDir(mainOutputDir+"\\"+sides[i]);
-		vector<string> sideColors = Util::DirContents(mainDir+"\\"+sides[i]);
+		string side = WinUtil::MakeDir(mainOutputDir+"\\"+sides[i]);
+		vector<string> sideColors = WinUtil::DirContents(mainDir+"\\"+sides[i]);
 
 		for (uint_fast32_t j = 0; j < sideColors.size(); ++j) {
-			string sideColor = Util::MakeDir(side+"\\"+sideColors[j]);
+			string sideColor = WinUtil::MakeDir(side+"\\"+sideColors[j]);
 //			cout << "\t" << sideColors[j] << endl;
-			vector<string> images = Util::DirContents(
+			vector<string> images = WinUtil::DirContents(
 					mainDir+"\\"+sides[i]+"\\"+sideColors[j]);
 
 			for (uint_fast32_t k = 0; k < images.size(); ++k) {
-//				cout << "\t\t" << images[k] << endl;
+//				cout << "\t\t" << images[k] << " - ";
 				string imagePath = mainDir+"\\"+sides[i]+"\\"+sideColors[j]+"\\"+images[k];
 				try {
-					Mat img = imread(imagePath);
-					vector<Mat> outputImg = ROIDetection(img);  // seq(ROI, outputImg)
-//					cout << "\t" << outputImg.size() << endl;
-					imwrite(sideColor+"\\ROI-"+images[k], outputImg[0]);
-					imwrite(sideColor+"\\Impact-"+images[k], outputImg[1]);
+					bool criterion = sides[i] == currentTopFolder[1];  // Dir sequence marker
+					if (WinUtil::IsFile(imagePath) && criterion) {
+						Mat img = imread(imagePath);
+						float_t bX=.694, bY=.572, fX =.46, fY=.49;
+						vector<Mat> outputImg = aioROIGenerator(img, 15, make_tuple(fX, fY));  // sequence(ROI, outputImg)
+						imwrite(sideColor+"\\ROI-"+images[k], outputImg[0]);
+						imwrite(sideColor+"\\Impact-"+images[k], outputImg[1]);
+						imwrite(mainFlatOutputDir+"\\ROI-"+images[k], outputImg[0]);
+						totalFile += 1;
+					}
 				} catch (Exception e) {
+					failFiles.emplace_back(sides[i]+"/"+sideColors[j]+"/"+images[k]);
 					continue;
 				}
 			}
 		}
 //		cout << sides[i] << endl;
 	}
+	for (int l = 0; l < failFiles.size(); ++l) {
+		cout << (l == 0? "\nFAIL PROCESSED FILES ("+to_string(failFiles.size()-2)+"):\n ": "")
+		<< "\t> " << failFiles[l] << endl;
+	}
+	cout << endl << "TOTAL FILE: " << totalFile << endl;
+}
 
-	cout << (Util::IsDir((string) mainDir) == 0? "ITS A FILE": "ITS A DIR") << endl;
+void DirParser(string dirPath) {
+	dirPath = R"(E:\)";
+	vector<string> subdirSets = WinUtil::DirContents(dirPath),
+	outputDir;
+
+	struct fUtil {
+		vector<string> recursive(string& targetPath) {
+
+		}
+	};
+
+	for (int i = 0; i < subdirSets.size(); ++i) {
+		try {
+			string targetPath = dirPath+"\\"+subdirSets[i];
+			if (WinUtil::IsDir(targetPath)) {
+				cerr << "DIR OK -> " << subdirSets[i] << endl;
+				vector<string> newDir = WinUtil::DirContents(targetPath);
+			} else {
+				cerr << "DIR FAIL -> " << subdirSets[i] << endl;
+			}
+		} catch (Exception& e) {
+			cerr << e.what() << endl;
+
+		}
+
+	}
+
 }
 
 int main() {
-	MultiFiles();
-
 	// !!! Execution time counting begin
 	auto start = chrono::high_resolution_clock::now();
 	ios_base::sync_with_stdio(false);
 
-	string file = "B_2601_UFL.png";
-	string fpath = R"(C:\Users\MarufN\Documents\Coding\C++\RegionOfInterest\assets\dataset\frontside\Kuning\)"+file;
-	Mat img = imread(fpath);
+//	DirParser("");
+	MultiFiles();
 
-	vector<Mat> outputImg = ComplexROIDetection(img);  // seq(ROI, outputImg)
+	string sampleFile = "B_1756_SDY.png";
+	string sampleFPath = R"(C:\Users\MarufN\Documents\Coding\C++\RegionOfInterest\assets\dataset\backside\Kuning-Back\)"+sampleFile;
+	sampleFPath = R"(E:\output_flat\ROI-B_2683_UKL.png)";
+	Mat sampleImg = imread(sampleFPath);
 
 	// !!! Execution time counting end
 	auto end = chrono::high_resolution_clock::now();
@@ -266,12 +187,6 @@ int main() {
 	time_taken *= 1e-9;
 	cout << "\nMain execution time: " << fixed
 	     << time_taken << setprecision(9) << " seconds";
-
-//	imwrite("E:/Z_ROI.png", outputImg[0]);
-//	imwrite("E:/Z_OutputImg.png", outputImg[1]);
-//	imshow("Output Image", outputImg[0]);
-//	imshow("ROI Image", outputImg[1]);
-//	waitKey(0);
 
 	return 0;
 }

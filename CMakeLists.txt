@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(RegionOfInterest)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/enhanced_roi_detection.h src/enhancedc_roi_detection.h src/winutil.h)
 
 # ADDED (Optimum Tips)
 set(OpenCV_STATIC ON)

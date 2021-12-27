@@ -1,0 +1,3 @@
+C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/CMakeFiles/RegionOfInterest.dir
+C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/CMakeFiles/edit_cache.dir
+C:/Users/MarufN/Documents/Coding/C++/RegionOfInterest/cmake-build-debug-mingw-1/CMakeFiles/rebuild_cache.dir
